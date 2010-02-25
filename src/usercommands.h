@@ -71,9 +71,9 @@ class CmdPaste : public QUndoCommand {
  */
 class CmdNewBasket : public QUndoCommand {
 	public:
-	int ACT_NEW=0;
-	int ACT_NEWSUB=1;
-	int ACT_NEWSIBLING=2;
+	//int ACT_NEW=0;
+	//int ACT_NEWSUB=1;
+	//int ACT_NEWSIBLING=2;
 	CmdNewBasket(int actiontype);
 	void undo();
 	void redo();
