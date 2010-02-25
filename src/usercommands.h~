@@ -1,0 +1,7 @@
+
+
+#include <QUndoCommand>
+ifndef DELETEITEM_H
+#define DELETEITEM_H
+#undef
+

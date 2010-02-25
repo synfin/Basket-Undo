@@ -35,6 +35,8 @@
   </Menu>
   <Menu name="edit" >
    <text>&amp;Edit</text>
+   <Action name="edit_undo" />
+   <Action name="edit_redo" />
    <Action name="edit_cut" />
    <Action name="edit_copy" />
    <Action name="edit_paste" />
@@ -118,6 +120,8 @@
   <text>Main Toolbar</text>
   <Action name="basket_properties" />
   <Separator lineSeparator="true" name="separator_0" />
+  <Action name="edit_undo" />
+  <Action name="edit_redo" />
   <Action name="edit_cut" />
   <Action name="edit_copy" />
   <Action name="edit_paste" />
@@ -207,6 +211,8 @@
   <Action name="note_group" />
   <Action name="note_ungroup" />
   <Separator/>
+  <Action name="edit_undo" />
+  <Action name="edit_redo" />
   <Action name="edit_cut" />
   <Action name="edit_copy" />
   <Action name="edit_delete" />

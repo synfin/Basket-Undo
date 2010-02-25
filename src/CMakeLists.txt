@@ -46,6 +46,7 @@ set(basketcommon_LIB_SRCS
     tagsedit.cpp
     transparentwidget.cpp
     tools.cpp
+    usercommands.cpp
     variouswidgets.cpp
     xmlwork.cpp
 )

@@ -1,0 +1,50 @@
+        disconnect(popupMenu("tags"), SIGNAL(aboutToShow()), this, SLOT(populateTagsMenu()));
+        disconnect(popupMenu("tags"), SIGNAL(aboutToHide()), this, SLOT(disconnectTagsMenu()));
+    }
+
+    if (isPart())
+        Global::likeBack->disableBar();
+}
+
+void BNPView::disconnectTagsMenu()
+{
+    QTimer::singleShot(0, this, SLOT(disconnectTagsMenuDelayed()));
+}
+
+void BNPView::disconnectTagsMenuDelayed()
+{
+    disconnect(m_lastOpenedTagsMenu, SIGNAL(triggered(QAction *)), currentBasket(), SLOT(toggledTagInMenu(QAction *)));
+    disconnect(m_lastOpenedTagsMenu, SIGNAL(aboutToHide()),  currentBasket(), SLOT(unlockHovering()));
+    disconnect(m_lastOpenedTagsMenu, SIGNAL(aboutToHide()),  currentBasket(), SLOT(disableNextClick()));
+}
+
+DeleteItem::DeleteItem(BasketView *currentBasket, QUndoCommand *parent) : QUndoCommand(parent) {
+  this->currentBasket=currentBasket;
+  NoteSelection *selection = currentBasket->selectedNotes();
+  if (selection->firstStacked()) {
+    d = NoteDrag::dragObject(selection, true, /*source=*/0);
+    mimeData = d->mimeData();
+    currentBasket->noteDelete();
+  }
+}
+void DeleteItem::undo() {
+  printf("in DeleteItem::undo()");
+  //The trick is to "paste" the note where it used to be.
+  currentBasket->closeEditor();
+  currentBasket->unselectAll();
+  Note *note = NoteFactory::dropNote(mimeData,currentBasket);
+  if (note) {currentBasket->insertCreatedNote(note);}
+  else {printf("Note was null\n");}
+}
+void DeleteItem::redo() {
+  currentBasket->noteDelete();
+  printf("in DeleteItem::redo()");
+}
+//AddItem::AddItem() {
+//}
+void AddItem::undo() {
+  printf("in AddItem::undo()");
+}
+void AddItem::redo() {
+  printf("in AddItem::redo()");
+}

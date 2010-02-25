@@ -60,6 +60,7 @@
 #include <KDE/KToggleAction>
 #include <cstdlib>
 
+#include "usercommands.h"
 #include "bnpview.h"
 #include "basketview.h"
 #include "decoratedbasket.h"
@@ -88,7 +89,7 @@
 #include "notefactory.h"
 #include "notecontent.h"
 #include "unistd.h" // usleep
-
+#include "noteselection.h"
 
 #include "bnpviewadaptor.h"
 /** class BNPView: */
@@ -813,7 +814,8 @@ void BNPView::setupActions()
 #endif
 
     /** Edit : ****************************************************************/
-
+    /* synfin edit to include undo/redo functionality */
+    setupUndo(a,ac);
     //m_actUndo     = KStandardAction::undo(  this, SLOT(undo()),                 actionCollection() );
     //m_actUndo->setEnabled(false); // Not yet implemented !
     //m_actRedo     = KStandardAction::redo(  this, SLOT(redo()),                 actionCollection() );
@@ -884,6 +886,36 @@ void BNPView::setupActions()
 
     a = ac->addAction("help_welcome_baskets", this, SLOT(addWelcomeBaskets()));
     a->setText(i18n("&Welcome Baskets"));
+}
+
+/**
+ * syn2fin@yahoo.com
+ * The actual code in bnpview is convoluted with items scattered everywhere
+ * I have given up figuring out where all the connect and QAction statements
+ * are located, and this method handles everything related to undo/redo
+ *
+ * Part of this is also my relative newness to the Basket code and QT Framework
+ * itself.  This will be merged with the rest of the code after acceptance and
+ * my own comfort level with Basket's source increases.
+ */
+void BNPView::setupUndo(KAction *a, KActionCollection *ac) {
+  m_undostack = new QUndoStack();
+  //a = ac->addAction("undo", this, SLOT(undo()));
+  m_actUndo=ac->addAction(KStandardAction::Undo,this,SLOT(undo()));
+  //a->setText(i18n("&undo"));
+  //a->setShortcut(0);
+  //m_actUndo=a;
+  m_actRedo=ac->addAction(KStandardAction::Redo,this,SLOT(redo()));
+  //a = ac->addAction("redo", this, SLOT(redo()));
+  //a->setText(i18n("&redo"));
+  //a->setShortcut(0);
+  //m_actRedo=a;
+  
+  // Connect appropriate items
+  connect(m_undostack,SIGNAL(canUndoChanged(bool)),m_actUndo,SLOT(setEnabled(bool)));
+  connect(m_undostack,SIGNAL(canRedoChanged(bool)),m_actRedo,SLOT(setEnabled(bool)));
+  connect(m_actUndo,SIGNAL(triggered()),m_undostack,SLOT(undo()));
+  connect(m_actRedo,SIGNAL(triggered()),m_undostack,SLOT(redo()));
 }
 
 BasketListViewItem* BNPView::topLevelItem(int i)
@@ -1592,7 +1624,10 @@ void BNPView::copyNote()
 }
 void BNPView::delNote()
 {
-    currentBasket()->noteDelete();
+  //currentBasket()->noteDelete();
+  printf("You called BNPView::delNote()\n");
+  QUndoCommand * delItem = new CmdDeleteNote(currentBasket());
+  m_undostack->push(delItem);
 }
 void BNPView::openNote()
 {
@@ -2042,11 +2077,13 @@ void BNPView::setFiltering(bool filtering)
 void BNPView::undo()
 {
     // TODO
+  printf("In BNPView::undo()\n");
 }
 
 void BNPView::redo()
 {
     // TODO
+  printf("In BNPView::redo()\n");
 }
 
 void BNPView::pasteToBasket(int /*index*/, QClipboard::Mode /*mode*/)
@@ -2811,3 +2848,4 @@ void BNPView::disconnectTagsMenuDelayed()
     disconnect(m_lastOpenedTagsMenu, SIGNAL(aboutToHide()),  currentBasket(), SLOT(unlockHovering()));
     disconnect(m_lastOpenedTagsMenu, SIGNAL(aboutToHide()),  currentBasket(), SLOT(disableNextClick()));
 }
+

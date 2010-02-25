@@ -158,9 +158,14 @@ public:
     void ungroupNote(Note *group);                   /// << Unplug @p group but put child notes at its place.
     /// And this one do almost all the above methods depending on the context:
     void insertNote(Note *note, Note *clicked, int zone, const QPoint &pos = QPoint(), bool animateNewPosition = false);
+	void getNotePosInfo(Note *clicked, int * zone, QPoint * pos);
+    void insertCreatedNote(Note *note, Note *clicked, int zone, QPoint pos);
     void insertCreatedNote(Note *note);
     /// And working with selections:
     void unplugSelection(NoteSelection *selection);
+	Note * getNoteClickedToInsert();
+	int getNoteZoneToInsert();
+	QPoint getNotePosToInsert();
     void insertSelection(NoteSelection *selection, Note *after);
     void selectSelection(NoteSelection *selection);
 private:
@@ -416,13 +421,13 @@ public:
     NoteSelection* selectedNotes();
 
 /// BLANK SPACES DRAWING:
-private:
+ private:
     QList<QRect> m_blankAreas;
     void recomputeBlankRects();
     QWidget *m_cornerWidget;
-
+    
 /// COMMUNICATION WITH ITS CONTAINER:
-signals:
+ signals:
     void postMessage(const QString &message);      /// << Post a temporar message in the statusBar.
     void setStatusBarText(const QString &message); /// << Set the permanent statusBar text or reset it if message isEmpty().
     void resetStatusBarText();                     /// << Equivalent to setStatusBarText("").

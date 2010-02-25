@@ -1880,13 +1880,28 @@ void BasketView::pasteNote(QClipboard::Mode mode)
         }
     }
 }
-
+Note * BasketView::getNoteClickedToInsert()
+{
+	return m_clickedToInsert;
+}
+int BasketView::getNoteZoneToInsert()
+{
+    return m_zoneToInsert;
+}
+QPoint BasketView::getNotePosToInsert()
+{
+    return m_posToInsert;
+}
 void BasketView::insertCreatedNote(Note *note)
 {
-    // Get the insertion data if the user clicked inside the basket:
     Note *clicked = m_clickedToInsert;
     int zone      = m_zoneToInsert;
     QPoint pos    = m_posToInsert;
+	insertCreatedNote(note, clicked, zone, pos);
+}
+void BasketView::insertCreatedNote(Note *note, Note *clicked, int zone, QPoint pos)
+{
+    // Get the insertion data if the user clicked inside the basket:
 
     // If it isn't the case, use the default position:
     if (!clicked && (pos.x() < 0 || pos.y() < 0)) {

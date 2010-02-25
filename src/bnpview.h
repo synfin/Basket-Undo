@@ -32,11 +32,13 @@
 #include <QHideEvent>
 #include <QEvent>
 #include <QShowEvent>
+#include <QUndoStack>
+#include <QUndoCommand>
 
 #include "global.h"
 #include "basket_export.h"
 #include "basketlistview.h"
-
+#include "usercommands.h"
 /// NEW:
 
 class QStackedWidget;
@@ -59,6 +61,12 @@ class BasketStatusBar;
 class Tag;
 class State;
 class Note;
+class CmdDeleteNote;
+class CmdAddItem;
+class CmdCut;
+class CmdPaste;
+class CmdSelectAll;
+class CmdNewBasket;
 
 class BASKET_EXPORT BNPView : public QSplitter
 {
@@ -332,6 +340,7 @@ private slots:
     void slotContextMenu(const QPoint &pos);
     void slotShowProperties(QTreeWidgetItem *item);
     void initialize();
+    void setupUndo(KAction *a,KActionCollection *ac);
 
 signals:
     void basketNumberChanged(int number);
@@ -345,6 +354,7 @@ protected:
 
 private:
     BasketTreeListView *m_tree;
+    QUndoStack *m_undostack;
     QStackedWidget *m_stack;
     bool          m_loading;
     bool          m_newBasketPopup;
